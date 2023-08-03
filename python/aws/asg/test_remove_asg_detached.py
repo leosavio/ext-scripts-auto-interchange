@@ -1,3 +1,23 @@
+# CUIDADO
+# ######################################################################
+# #                                                                    #
+# #                        CUIDADO                                     #
+# #                                                                    #
+# ######################################################################
+# CUIDADO
+# 
+# The following code is designed to terminate instances. Make sure to 
+# test this thoroughly in a safe environment before running it in
+# production. The termination process is irreversible and could result 
+# in data loss or other unintended consequences if used improperly.
+# 
+# By proceeding, you acknowledge the risks involved and take full 
+# responsibility for any consequences that may arise from running this 
+# script.
+# 
+# CUIDADO
+
+
 import boto3
 import datetime
 
