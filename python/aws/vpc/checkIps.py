@@ -1,31 +1,31 @@
 import boto3
+import ipaddress
 
 ec2 = boto3.client('ec2')
 
-# Get list of VPC IDs 
-response = ec2.describe_vpcs()
+# Get list of VPC IDs
+response = ec2.describe_vpcs() 
 vpc_ids = [vpc['VpcId'] for vpc in response['Vpcs']]
 
 for vpc_id in vpc_ids:
 
-  # Get VPC info
+  # Get VPC CIDR
   response = ec2.describe_vpcs(VpcIds=[vpc_id])
-  
-  vpc_cidr = response['Vpcs'][0]['CidrBlock']
-  avail_ips = response['Vpcs'][0]['AvailableIpAddressCount']
+  vpc_cidr = response['Vpcs'][0]['CidrBlock']  
 
-  print(f"VPC {vpc_id} CIDR: {vpc_cidr}")
-  print(f"Available IPs: {avail_ips}")
-  
-  # Get in-use IPs
+  # Calculate total IPs
+  ip_network = ipaddress.ip_network(vpc_cidr)
+  total_ips = ip_network.num_addresses
+
+  # Get interfaces and in-use IPs
   response = ec2.describe_network_interfaces(
       Filters=[{'Name': 'vpc-id', 'Values': [vpc_id]}]
   )
+  in_use_ips = [eni['PrivateIpAddress'] for eni in response['NetworkInterfaces']]
+  num_in_use = len(in_use_ips)
 
-  ip_addresses = [eni['PrivateIpAddress'] for eni in response['NetworkInterfaces']]
-
-  print(f"IPs in use in {vpc_id}:")
-  for ip in ip_addresses:
-    print(ip)
-
-  print() # newline between VPCs
+  # Print results
+  print(f"VPC {vpc_id}")
+  print(f"CIDR: {vpc_cidr}")
+  print(f"Total IPs: {total_ips}") 
+  print(f"IPs in use: {num_in_use}")
