@@ -3,29 +3,52 @@ import ipaddress
 
 ec2 = boto3.client('ec2')
 
-# Get list of VPC IDs
-response = ec2.describe_vpcs() 
+# Get VPC IDs
+response = ec2.describe_vpcs()
 vpc_ids = [vpc['VpcId'] for vpc in response['Vpcs']]
 
 for vpc_id in vpc_ids:
 
   # Get VPC CIDR
   response = ec2.describe_vpcs(VpcIds=[vpc_id])
-  vpc_cidr = response['Vpcs'][0]['CidrBlock']  
+  vpc_cidr = response['Vpcs'][0]['CidrBlock']
 
   # Calculate total IPs
   ip_network = ipaddress.ip_network(vpc_cidr)
-  total_ips = ip_network.num_addresses
+  total_ips = ip_network.num_addresses  
 
-  # Get interfaces and in-use IPs
+  # Get subnets
+  response = ec2.describe_subnets(
+      Filters=[{'Name': 'vpc-id', 'Values': [vpc_id]}]
+  )
+
+  print(f"VPC {vpc_id}")
+  
+  # Print subnets
+  print("Subnets:")
+  for subnet in response['Subnets']:
+    print(f"- {subnet['SubnetId']} ({subnet['CidrBlock']})")
+
+  # Get interfaces
   response = ec2.describe_network_interfaces(
       Filters=[{'Name': 'vpc-id', 'Values': [vpc_id]}]
   )
-  in_use_ips = [eni['PrivateIpAddress'] for eni in response['NetworkInterfaces']]
-  num_in_use = len(in_use_ips)
+
+  # Initialize counter 
+  num_in_use = 0
+
+  # Loop through interfaces
+  for eni in response['NetworkInterfaces']:
+
+    # Count primary IP
+    num_in_use += 1  
+
+    # Check for secondary IPs
+    if 'SecondaryPrivateIpAddressCount' in eni:
+      num_in_use += eni['SecondaryPrivateIpAddressCount']
 
   # Print results
-  print(f"VPC {vpc_id}")
-  print(f"CIDR: {vpc_cidr}")
-  print(f"Total IPs: {total_ips}") 
+  print(f"Total IPs: {total_ips}")
   print(f"IPs in use: {num_in_use}")
+  
+  print() # newline between VPCs
