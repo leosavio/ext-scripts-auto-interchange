@@ -40,12 +40,9 @@ for vpc_id in vpc_ids:
   # Loop through interfaces
   for eni in response['NetworkInterfaces']:
 
-    # Count primary IP
-    num_in_use += 1  
-
-    # Check for secondary IPs
-    if 'SecondaryPrivateIpAddressCount' in eni:
-      num_in_use += eni['SecondaryPrivateIpAddressCount']
+    # Count secondary IPs
+    secondary_ips = eni['PrivateIpAddresses'][1:]
+    num_in_use += len(secondary_ips)
 
   # Print results
   print(f"Total IPs: {total_ips}")
