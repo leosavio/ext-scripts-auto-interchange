@@ -3,16 +3,15 @@ import json
 
 def get_nodes_from_machineset(machineset_name):
     # Get machines associated with the specific MachineSet
-    machines_output = subprocess.check_output(['oc', 'get', 'machines', '-n', 'openshift-machine-api', '-l', f'machine.openshift.io/machineset={machineset_name}', '-o', 'json'])
+    machines_output = subprocess.check_output(['oc', 'get', 'machines', '-A', '-l', f'machine.openshift.io/cluster-api-machineset={machineset_name}', '-o', 'json'])
     machines = json.loads(machines_output)['items']
 
     node_names = []
 
     # For each machine, retrieve the associated node
     for machine in machines:
-        machine_annotation = 'machine.openshift.io/machine'
-        node_name = machine['metadata']['annotations'].get(machine_annotation, '').split('/')[-1]
-        if node_name:
+        if 'nodeRef' in machine['status'] and 'name' in machine['status']['nodeRef']:
+            node_name = machine['status']['nodeRef']['name']
             node_names.append((node_name, machineset_name))
     
     return node_names
