@@ -47,3 +47,8 @@ for node, pods in pods_on_nodes.items():
     print(f"Node: {node} - MachineSet: {machineset}")
     for pod in pods:
         print(f"  - {pod}")
+
+# Printing the brief summary
+print("\nSummary:")
+for node in pods_on_nodes.keys():
+    print(f"- {node}")
