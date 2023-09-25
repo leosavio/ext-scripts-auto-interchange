@@ -2,10 +2,20 @@ import subprocess
 import json
 
 def get_nodes_from_machineset(machineset_name):
-    # Get nodes from a specific MachineSet
-    nodes_output = subprocess.check_output(['oc', 'get', 'nodes', '-l', f'machine.openshift.io/machineset={machineset_name}', '-o', 'json'])
-    nodes = json.loads(nodes_output)
-    return [(node['metadata']['name'], machineset_name) for node in nodes['items']]
+    # Get machines associated with the specific MachineSet
+    machines_output = subprocess.check_output(['oc', 'get', 'machines', '-n', 'openshift-machine-api', '-l', f'machine.openshift.io/machineset={machineset_name}', '-o', 'json'])
+    machines = json.loads(machines_output)['items']
+
+    node_names = []
+
+    # For each machine, retrieve the associated node
+    for machine in machines:
+        machine_annotation = 'machine.openshift.io/machine'
+        node_name = machine['metadata']['annotations'].get(machine_annotation, '').split('/')[-1]
+        if node_name:
+            node_names.append((node_name, machineset_name))
+    
+    return node_names
 
 def get_pods_on_nodes(exclude_namespace):
     # List all pods across all namespaces, excluding OpenShift namespaces and the specific namespace
