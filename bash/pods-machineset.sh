@@ -11,10 +11,10 @@ while IFS= read -r line; do
     node_name=$(echo $line | awk '{print $2}')
 
     # Find the corresponding machine for the node
-    machine_name=$(oc get machine -o=custom-columns=NAME:.metadata.name,NODE:.status.nodeRef.name --no-headers | grep $node_name | awk '{print $1}')
+    machine_name=$(oc get machine -o=custom-columns=NAME:.metadata.name,NODE:.status.nodeRef.name -n openshift-machine-api --no-headers | grep $node_name | awk '{print $1}')
 
     # Assuming machines are labeled with their machine set's name
-    machine_set_label=$(oc get machine $machine_name -o jsonpath='{.metadata.labels.machine\.openshift\.io/cluster-api-machineset}')
+    machine_set_label=$(oc get machine $machine_name -n openshift-machine-api -o jsonpath='{.metadata.labels.machine\.openshift\.io/cluster-api-machineset}')
 
     # Print the pod, node, machine, and machine set
     echo "$pod_name,$node_name,$machine_name,$machine_set_label"
