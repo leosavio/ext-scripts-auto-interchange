@@ -1,13 +1,14 @@
-Lambda (Java JAR e Java com compilação nativa):
+Lambda (Compute: Java JAR e Java com compilação nativa - GraalVM):
 
 Avaliar o coldstart e consumo médio das funções Lambda e o custo de ambas tecnologias.
 Considerar o uso de compilação nativa para reduzir o tempo de inicialização e melhorar o desempenho/custo benefício.
-
+Cases Lambda acionadas pelo SQS, SNS, EventBridge, API Gateway e S3. 
+Cases com o RDS para banco de dados e com o KMS para criptografia
   
 SQS (integração com SNS, DLQ, Lambda, API Gateway, EventBridge e KMS):
 
 Demonstrar o funcionamento e uso das possíveis integrações e validação dos modulos terraform/contrato.
-Considerar a retenção de mensagens, a criptografia usando KMS e a configuração de DLQ para tratamento de erros.
+Considerar a retenção de mensagens/redrive (DLQ), a criptografia usando KMS e a configuração de DLQ para tratamento de erros.
 Avaliar a integração com outros serviços, como SNS, Lambda e API Gateway, para estimar os custos e questões arquiteturais.
 
   
@@ -18,9 +19,9 @@ Considerar a criptografia usando KMS e a configuração de DLQ para tratamento d
 Avaliar a integração com outros serviços e os custos associados, para estimar os custos e questões arquiteturais.
 
   
-RDS (PostgreSQL):
+RDS (Database: PostgreSQL):
 
-Determinar os parametros para viabilizar a automação, tamanho da instância e recomendações com base no volume de dados e no desempenho esperado.
+Determinar os parametros para viabilizar a automação, tamanho da instância e IOPS provisionados, se necessário.
 Considerar a configuração de armazenamento, backups automáticos e replicação, se aplicável.
 Estimar os custos com base no tipo de instância, armazenamento e transferência de dados.
 Realização de avaliação do Backstage e evolução do modulo terraform/contrato.
@@ -33,7 +34,7 @@ Considerar a integração com serviços de backend, como Lambda, SNS e SQS.
 Planejar testes A/B usando AppConfig ou Parameter Store para alternar recursos.
 
   
-CloudFront (integração com S3 - CDN, Lambda, API Gateway e AppConfig - testes A/B e Canary):
+CloudFront (CDN: integração com S3, Lambda, API Gateway, Amplify e AppConfig - testes A/B e Canary):
 
 Demonstrar o funcionamento e uso das possíveis integrações e validação dos modulos terraform/contrato.
 Estimar o volume de tráfego e a transferência de dados da CDN.
@@ -41,25 +42,28 @@ Considerar a integração com origens, como S3 e API Gateway.
 Planejar testes A/B e implantações Canary usando Lambda@Edge e AppConfig.
 
   
-AWS Batch (testes com Spot Instances):
+AWS Batch (Compute: testes com Spot Instances):
 
 Demonstrar o funcionamento e uso das possíveis integrações e validação dos modulos terraform/contrato.
 Avaliar os requisitos de computação para os trabalhos em lote e a frequência de execução.
+Estimar o número de jobs, a duração e os recursos computacionais necessários (CPU, memória).
 Considerar o uso de Spot Instances para reduzir custos em cargas de trabalho flexíveis.
 Estimar os custos com base no tipo de instância, duração do trabalho e transferência de dados.
 
   
-Backstage Community (testes e validação - detalhar recursos necessários):
+Backstage Community (Compute/K8s: testes e validação - detalhar recursos necessários):
 
 Avaliar os requisitos de infraestrutura para hospedar o Backstage Community.
 Considerar a integração com a AWS, CI/CD, maturidade e alinhamento para viabilização de plano B.
 Detalhar os recursos necessários, como computação, armazenamento e rede, para testes e validação.
+Analisar questoes de IAM para controle de acesso/operação.
 
   
 AppConfig (integração com Lambda, microsserviços e microfrontends):
 
 Demonstrar o funcionamento e uso das possíveis integrações e validação dos modulos terraform/contrato.
 Planejar a configuração e implantação do AppConfig para gerenciar configurações de aplicativos.
+Avaliar o uso de testes A/B e gerenciamento de configurações com AppConfig.
 Considerar a integração com Lambda e microsserviços/microfrontends em execução no cluster Kubernetes existente.
 Estimar os custos com base no número de configurações, implantações e solicitações de API.
 
@@ -67,17 +71,17 @@ Estimar os custos com base no número de configurações, implantações e solic
 Step Functions:
 
 Demonstrar o funcionamento e uso das possíveis integrações e validação dos modulos terraform/contrato.
-Avaliar os fluxos de trabalho e a complexidade das máquinas de estado.
+Avaliar os workflows e a complexidade das máquinas de estado.
 Estimar o número de transições de estado e a duração média das execuções.
 Considerar a integração com outros serviços da AWS e os custos associados.
 
   
-Parameter Store:
+Parameter Store(Systems Manager):
 
 Demonstrar o funcionamento e uso das possíveis integrações e validação dos modulos terraform/contrato.
 Estimar o número de parâmetros a serem armazenados e a frequência de acesso.
 Considerar a criptografia usando KMS, se necessário.
-Avaliar os custos com base no número de operações de API e no armazenamento de parâmetros.
+Avaliar os custos com base no número de operações de API e no armazenamento de parâmetros para Lambda, API Gateway e outros serviços.
 
   
 CloudWatch Logs e EventBridge:
