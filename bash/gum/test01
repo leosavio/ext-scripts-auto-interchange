@@ -1,0 +1,75 @@
+# Function to run CLI logic
+run_cli_logic() {
+    echo "Running CLI logic using Gum..."
+
+    # Prompt the user to choose between Backend and Frontend
+    main_selection=$($GUM_BINARY choose "Backend" "Frontend")
+
+    if [ "$main_selection" == "Backend" ]; then
+        # Backend options
+        backend_option=$($GUM_BINARY choose "lambda-s3" "lambda-sqs" "microservice-rest")
+
+        # Run maven archetype command based on the selected backend option
+        case "$backend_option" in
+            "lambda-s3")
+                echo "Selected Backend: lambda-s3"
+                # Run the maven archetype command for lambda-s3
+                mvn archetype:generate \
+                    -DgroupId=com.example \
+                    -DartifactId=lambda-s3 \
+                    -DarchetypeArtifactId=maven-archetype-quickstart \
+                    -DinteractiveMode=false
+                ;;
+            "lambda-sqs")
+                echo "Selected Backend: lambda-sqs"
+                # Run the maven archetype command for lambda-sqs
+                mvn archetype:generate \
+                    -DgroupId=com.example \
+                    -DartifactId=lambda-sqs \
+                    -DarchetypeArtifactId=maven-archetype-quickstart \
+                    -DinteractiveMode=false
+                ;;
+            "microservice-rest")
+                echo "Selected Backend: microservice-rest"
+                # Run the maven archetype command for microservice-rest
+                mvn archetype:generate \
+                    -DgroupId=com.example \
+                    -DartifactId=microservice-rest \
+                    -DarchetypeArtifactId=maven-archetype-webapp \
+                    -DinteractiveMode=false
+                ;;
+            *)
+                echo "Unknown backend option selected."
+                ;;
+        esac
+
+    elif [ "$main_selection" == "Frontend" ]; then
+        # Frontend options
+        frontend_option=$($GUM_BINARY choose "standalone (padrao)" "microfrontend shell" "microfrontend app")
+
+        # Run npx create-next-app@latest based on the selected frontend option
+        case "$frontend_option" in
+            "standalone (padrao)")
+                echo "Selected Frontend: standalone (padrao)"
+                # Run the npx command for standalone (default)
+                npx create-next-app@latest my-standalone-app
+                ;;
+            "microfrontend shell")
+                echo "Selected Frontend: microfrontend shell"
+                # Run the npx command for microfrontend shell
+                npx create-next-app@latest my-microfrontend-shell --example with-micro-frontend-shell
+                ;;
+            "microfrontend app")
+                echo "Selected Frontend: microfrontend app"
+                # Run the npx command for microfrontend app
+                npx create-next-app@latest my-microfrontend-app --example with-micro-frontend-app
+                ;;
+            *)
+                echo "Unknown frontend option selected."
+                ;;
+        esac
+
+    else
+        echo "Unknown selection made."
+    fi
+}
